@@ -74,7 +74,7 @@ public class JavaToDart extends AnAction {
             boolean needNewClass = dartField.typeClass != null && dartField.typeClass.dartFields != null;
             if (needNewClass) {
                 dartClassList.add(dartField.typeClass);
-                stringBuilder.append(dartField.typeClass.className + " " + dartField.name + ";\n");
+                stringBuilder.append(dartField.typeClass.className + " " + lineToHump(dartField.name) + ";\n");
             } else {
                 String typeClassName = dartField.typeClass.className;
                 if (typeClassName.equals("long")) {
