@@ -11,6 +11,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class JavaToDart extends AnAction {
 
@@ -82,12 +84,13 @@ public class JavaToDart extends AnAction {
                 } else if (typeClassName.equals("boolean")) {
                     typeClassName = "bool";
                 }
-                stringBuilder.append(typeClassName + " " + dartField.name + ";\n");
+                stringBuilder.append(typeClassName + " " + lineToHump(dartField.name) + ";\n");
             }
         }
         stringBuilder.append(className + ".fromJson(dynamic json) {\n");
         for (DartField dartField : dartClass.dartFields) {
-            stringBuilder.append("dynamic " + dartField.name + "Json = ");
+            String humpName = lineToHump(dartField.name);
+            stringBuilder.append("dynamic " + humpName + "Json = ");
             List<String> keys = dartField.keys;
             if (keys.isEmpty()) {
                 keys.add(dartField.name);
@@ -99,13 +102,13 @@ public class JavaToDart extends AnAction {
                 stringBuilder.append("json[\'" + keys.get(i) + "\']");
             }
             stringBuilder.append(";\n");
-            stringBuilder.append("if (" + dartField.name + "Json != null)\n");
+            stringBuilder.append("if (" + humpName + "Json != null)\n");
             if (dartField.typeClass.genericity != null && dartField.typeClass.dartFields != null) {
-                stringBuilder.append(dartField.name + " = " + dartField.name + "Json.map((item)=>" + dartField.typeClass.genericity + ".fromJson(item)).toList();\n");
+                stringBuilder.append(humpName + " = " + humpName + "Json.map((item)=>" + dartField.typeClass.genericity + ".fromJson(item)).toList();\n");
             } else if (dartField.typeClass.dartFields == null) {
-                stringBuilder.append(dartField.name + " = " + dartField.name + "Json;\n");
+                stringBuilder.append(humpName + " = " + humpName + "Json;\n");
             } else {
-                stringBuilder.append(dartField.name + " = " + dartField.typeClass.className + ".fromJson(" + dartField.name + "Json);\n");
+                stringBuilder.append(humpName + " = " + dartField.typeClass.className + ".fromJson(" + humpName + "Json);\n");
             }
         }
         stringBuilder.append("}\n");
@@ -192,6 +195,23 @@ public class JavaToDart extends AnAction {
     private boolean checkFile(PsiFile file) {
         return file instanceof PsiJavaFile;
     }
+
+    static Pattern linePattern = Pattern.compile("_(\\w)");
+
+
+    public static String lineToHump(String str) {
+        if (!str.contains("_")) {
+            return str;
+        }
+        str = str.toLowerCase();
+        Matcher matcher = linePattern.matcher(str);
+        StringBuffer sb = new StringBuffer();
+        while (matcher.find()) {
+            matcher.appendReplacement(sb, matcher.group(1).toUpperCase());
+        }
+        matcher.appendTail(sb);
+        return sb.toString();
+    }
 }
 
 class DartClass {
@@ -216,3 +236,5 @@ class DartField {
     String name;
 
 }
+
+
