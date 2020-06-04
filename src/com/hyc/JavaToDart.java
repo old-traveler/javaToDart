@@ -112,6 +112,22 @@ public class JavaToDart extends AnAction {
             }
         }
         stringBuilder.append("}\n");
+        stringBuilder.append("\n");
+        stringBuilder.append("Map<String, dynamic> toJson() {\n");
+        stringBuilder.append("final Map<String, dynamic> jsonData = new Map<String, dynamic>();\n");
+        for (DartField dartField : dartClass.dartFields) {
+            String key = dartField.keys.isEmpty() ? dartField.name : dartField.keys.get(0);
+            String humpName = lineToHump(dartField.name);
+            if (dartField.typeClass.genericity != null && dartField.typeClass.dartFields != null) {
+                stringBuilder.append("jsonData[\'" + key + "\'] = " + "this." + humpName + "?.map((v) => v.toJson())?.toList();\n");
+            } else if (dartField.typeClass.dartFields == null) {
+                stringBuilder.append("jsonData[\'" + key + "\'] = " + "this." + humpName + ";\n");
+            } else {
+                stringBuilder.append("jsonData[\'" + key + "\'] = " + "this." + humpName + ".toJson();\n");
+            }
+        }
+        stringBuilder.append("return jsonData;\n");
+        stringBuilder.append("}\n");
         stringBuilder.append("}\n");
         return dartClassList;
     }
