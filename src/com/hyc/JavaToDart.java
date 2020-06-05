@@ -106,7 +106,12 @@ public class JavaToDart extends AnAction {
             if (dartField.typeClass.genericity != null && dartField.typeClass.dartFields != null) {
                 stringBuilder.append(humpName + " = " + humpName + "Json.map<" + dartField.typeClass.genericity + ">((item)=>" + dartField.typeClass.genericity + ".fromJson(item)).toList();\n");
             } else if (dartField.typeClass.dartFields == null) {
-                stringBuilder.append(humpName + " = " + humpName + "Json;\n");
+                String fieldClass = dartField.typeClass.className;
+                if ("double".equals(fieldClass) || "float".equals(fieldClass)) {
+                    stringBuilder.append(humpName + " = " + humpName + "Json.toDouble();\n");
+                } else {
+                    stringBuilder.append(humpName + " = " + humpName + "Json;\n");
+                }
             } else {
                 stringBuilder.append(humpName + " = " + dartField.typeClass.className + ".fromJson(" + humpName + "Json);\n");
             }
