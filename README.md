@@ -1,0 +1,2 @@
+# javaToDart
+javaBean To DartEntity
