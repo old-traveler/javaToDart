@@ -1,2 +1,2 @@
 # javaToDart
-javaBean To DartEntity
+将已有的Java bean类转化为dart entity类
