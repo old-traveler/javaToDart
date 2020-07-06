@@ -30,6 +30,9 @@
     <action id="com.hyc.java2dart" class="com.hyc.JavaToDart" text="java2dart">
       <add-to-group group-id="JavaGenerateGroup1" anchor="first"/>
     </action>
+    <action id="com.hyc.jsonDart" class="com.hyc.JsonDart" text="Json To Dart" description="Json To Dart">
+      <add-to-group group-id="NewGroup" anchor="first"/>
+    </action>
   </actions>
 
 </idea-plugin>
